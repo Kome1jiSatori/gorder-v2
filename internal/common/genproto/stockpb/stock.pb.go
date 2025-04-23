@@ -7,7 +7,7 @@
 package stockpb
 
 import (
-	orderpb "github.com/Kome1jiSatori/gorder-v2/internal/common/genproto/orderpb"
+	orderpb "github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

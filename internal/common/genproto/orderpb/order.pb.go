@@ -347,7 +347,7 @@ const file_orderpb_order_proto_rawDesc = "" +
 	"\fOrderService\x12B\n" +
 	"\vCreateOrder\x12\x1b.orderpb.CreateOrderRequest\x1a\x16.google.protobuf.Empty\x124\n" +
 	"\bGetOrder\x12\x18.orderpb.GetOrderRequest\x1a\x0e.orderpb.Order\x125\n" +
-	"\vUpdateOrder\x12\x0e.orderpb.Order\x1a\x16.google.protobuf.EmptyBEZCgithub.com/Kome1jiSatori/gorder-v2/internal/common/genproto/orderpbb\x06proto3"
+	"\vUpdateOrder\x12\x0e.orderpb.Order\x1a\x16.google.protobuf.EmptyB<Z:github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpbb\x06proto3"
 
 var (
 	file_orderpb_order_proto_rawDescOnce sync.Once
