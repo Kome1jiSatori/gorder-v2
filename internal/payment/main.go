@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"github.com/Kome1jiSatori/gorder-v2/common/broker"
 	"github.com/Kome1jiSatori/gorder-v2/common/config"
 	"github.com/Kome1jiSatori/gorder-v2/common/logging"
 	"github.com/Kome1jiSatori/gorder-v2/common/server"
 	"github.com/Kome1jiSatori/gorder-v2/payment/infrastructure/consumer"
+	"github.com/Kome1jiSatori/gorder-v2/payment/service"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -18,7 +20,14 @@ func init() {
 }
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	serverType := viper.GetString("payment.server-to-run")
+
+	application, cleanup := service.NewApplication(ctx)
+	defer cleanup()
+
 	// mq初始化
 	ch, closeCh := broker.Connect(
 		viper.GetString("rabbitmq.user"),
@@ -31,8 +40,8 @@ func main() {
 		_ = closeCh()
 	}()
 
-	go consumer.NewConsumer().Listen(ch)
-	
+	go consumer.NewConsumer(application).Listen(ch)
+
 	paymentHandler := NewPaymentHandler()
 	switch serverType {
 	case "http":
