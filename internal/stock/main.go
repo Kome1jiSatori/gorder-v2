@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/Kome1jiSatori/gorder-v2/common/config"
+	"github.com/Kome1jiSatori/gorder-v2/common/discovery"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/stockpb"
 	"github.com/Kome1jiSatori/gorder-v2/common/server"
 	"github.com/Kome1jiSatori/gorder-v2/stock/ports"
@@ -27,6 +28,14 @@ func main() {
 	defer cancel()
 
 	application := service.NewApplication(ctx)
+
+	deregisterFunc, err := discovery.RegisterToConsul(ctx, serviceName)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer func() {
+		_ = deregisterFunc()
+	}()
 
 	switch serverType {
 	case "grpc":
