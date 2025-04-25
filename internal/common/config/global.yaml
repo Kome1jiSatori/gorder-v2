@@ -29,4 +29,4 @@ rabbitmq:
   host: 127.0.0.1
   port: 5672
 
-stripe-key: sk_test_51RHe60PvlGOuxYfJYBmKuCNuoaGIeztsqdGAexh6af6VVz7qbuWjFvCadNTTnhCUi57UEWBP9DWia4DwS6h5pmlJ00OIHzfm9x
+stripe-key: "${STRIPE_KEY}"
