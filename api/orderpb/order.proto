@@ -13,8 +13,8 @@ service  OrderService {
 
 message CreateOrderRequest {
   string CustomerID = 1;
-  repeated ItemWithQuantity Items = 2;
-}
+  repeated ItemWithQuantity Items = 2; //repeated代表可以有多个items
+} // 请求创建，给出消费者id和物品及数量
 
 message  GetOrderRequest {
   string CustomerID = 1;
