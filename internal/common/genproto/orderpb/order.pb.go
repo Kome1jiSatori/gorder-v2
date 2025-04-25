@@ -25,7 +25,7 @@ const (
 type CreateOrderRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CustomerID    string                 `protobuf:"bytes,1,opt,name=CustomerID,proto3" json:"CustomerID,omitempty"`
-	Items         []*ItemWithQuantity    `protobuf:"bytes,2,rep,name=Items,proto3" json:"Items,omitempty"`
+	Items         []*ItemWithQuantity    `protobuf:"bytes,2,rep,name=Items,proto3" json:"Items,omitempty"` //repeated代表可以有多个items
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -76,8 +76,8 @@ func (x *CreateOrderRequest) GetItems() []*ItemWithQuantity {
 
 type GetOrderRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CustomerID    string                 `protobuf:"bytes,1,opt,name=CustomerID,proto3" json:"CustomerID,omitempty"`
-	Items         []*ItemWithQuantity    `protobuf:"bytes,2,rep,name=Items,proto3" json:"Items,omitempty"`
+	OrderID       string                 `protobuf:"bytes,1,opt,name=OrderID,proto3" json:"OrderID,omitempty"`
+	CustomerID    string                 `protobuf:"bytes,2,opt,name=CustomerID,proto3" json:"CustomerID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -112,18 +112,18 @@ func (*GetOrderRequest) Descriptor() ([]byte, []int) {
 	return file_orderpb_order_proto_rawDescGZIP(), []int{1}
 }
 
+func (x *GetOrderRequest) GetOrderID() string {
+	if x != nil {
+		return x.OrderID
+	}
+	return ""
+}
+
 func (x *GetOrderRequest) GetCustomerID() string {
 	if x != nil {
 		return x.CustomerID
 	}
 	return ""
-}
-
-func (x *GetOrderRequest) GetItems() []*ItemWithQuantity {
-	if x != nil {
-		return x.Items
-	}
-	return nil
 }
 
 type ItemWithQuantity struct {
@@ -252,6 +252,7 @@ type Order struct {
 	CustomerID    string                 `protobuf:"bytes,2,opt,name=CustomerID,proto3" json:"CustomerID,omitempty"`
 	Status        string                 `protobuf:"bytes,3,opt,name=Status,proto3" json:"Status,omitempty"`
 	Items         []*Item                `protobuf:"bytes,4,rep,name=Items,proto3" json:"Items,omitempty"`
+	PaymentLink   string                 `protobuf:"bytes,5,opt,name=PaymentLink,proto3" json:"PaymentLink,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -314,6 +315,13 @@ func (x *Order) GetItems() []*Item {
 	return nil
 }
 
+func (x *Order) GetPaymentLink() string {
+	if x != nil {
+		return x.PaymentLink
+	}
+	return ""
+}
+
 var File_orderpb_order_proto protoreflect.FileDescriptor
 
 const file_orderpb_order_proto_rawDesc = "" +
@@ -323,12 +331,12 @@ const file_orderpb_order_proto_rawDesc = "" +
 	"\n" +
 	"CustomerID\x18\x01 \x01(\tR\n" +
 	"CustomerID\x12/\n" +
-	"\x05Items\x18\x02 \x03(\v2\x19.orderpb.ItemWithQuantityR\x05Items\"b\n" +
-	"\x0fGetOrderRequest\x12\x1e\n" +
+	"\x05Items\x18\x02 \x03(\v2\x19.orderpb.ItemWithQuantityR\x05Items\"K\n" +
+	"\x0fGetOrderRequest\x12\x18\n" +
+	"\aOrderID\x18\x01 \x01(\tR\aOrderID\x12\x1e\n" +
 	"\n" +
-	"CustomerID\x18\x01 \x01(\tR\n" +
-	"CustomerID\x12/\n" +
-	"\x05Items\x18\x02 \x03(\v2\x19.orderpb.ItemWithQuantityR\x05Items\">\n" +
+	"CustomerID\x18\x02 \x01(\tR\n" +
+	"CustomerID\">\n" +
 	"\x10ItemWithQuantity\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x1a\n" +
 	"\bQuantity\x18\x02 \x01(\x05R\bQuantity\"`\n" +
@@ -336,14 +344,15 @@ const file_orderpb_order_proto_rawDesc = "" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x12\n" +
 	"\x04Name\x18\x02 \x01(\tR\x04Name\x12\x1a\n" +
 	"\bQuantity\x18\x03 \x01(\x05R\bQuantity\x12\x18\n" +
-	"\aPriceID\x18\x04 \x01(\tR\aPriceID\"t\n" +
+	"\aPriceID\x18\x04 \x01(\tR\aPriceID\"\x96\x01\n" +
 	"\x05Order\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12\x1e\n" +
 	"\n" +
 	"CustomerID\x18\x02 \x01(\tR\n" +
 	"CustomerID\x12\x16\n" +
 	"\x06Status\x18\x03 \x01(\tR\x06Status\x12#\n" +
-	"\x05Items\x18\x04 \x03(\v2\r.orderpb.ItemR\x05Items2\xbf\x01\n" +
+	"\x05Items\x18\x04 \x03(\v2\r.orderpb.ItemR\x05Items\x12 \n" +
+	"\vPaymentLink\x18\x05 \x01(\tR\vPaymentLink2\xbf\x01\n" +
 	"\fOrderService\x12B\n" +
 	"\vCreateOrder\x12\x1b.orderpb.CreateOrderRequest\x1a\x16.google.protobuf.Empty\x124\n" +
 	"\bGetOrder\x12\x18.orderpb.GetOrderRequest\x1a\x0e.orderpb.Order\x125\n" +
@@ -372,19 +381,18 @@ var file_orderpb_order_proto_goTypes = []any{
 }
 var file_orderpb_order_proto_depIdxs = []int32{
 	2, // 0: orderpb.CreateOrderRequest.Items:type_name -> orderpb.ItemWithQuantity
-	2, // 1: orderpb.GetOrderRequest.Items:type_name -> orderpb.ItemWithQuantity
-	3, // 2: orderpb.Order.Items:type_name -> orderpb.Item
-	0, // 3: orderpb.OrderService.CreateOrder:input_type -> orderpb.CreateOrderRequest
-	1, // 4: orderpb.OrderService.GetOrder:input_type -> orderpb.GetOrderRequest
-	4, // 5: orderpb.OrderService.UpdateOrder:input_type -> orderpb.Order
-	5, // 6: orderpb.OrderService.CreateOrder:output_type -> google.protobuf.Empty
-	4, // 7: orderpb.OrderService.GetOrder:output_type -> orderpb.Order
-	5, // 8: orderpb.OrderService.UpdateOrder:output_type -> google.protobuf.Empty
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	3, // 1: orderpb.Order.Items:type_name -> orderpb.Item
+	0, // 2: orderpb.OrderService.CreateOrder:input_type -> orderpb.CreateOrderRequest
+	1, // 3: orderpb.OrderService.GetOrder:input_type -> orderpb.GetOrderRequest
+	4, // 4: orderpb.OrderService.UpdateOrder:input_type -> orderpb.Order
+	5, // 5: orderpb.OrderService.CreateOrder:output_type -> google.protobuf.Empty
+	4, // 6: orderpb.OrderService.GetOrder:output_type -> orderpb.Order
+	5, // 7: orderpb.OrderService.UpdateOrder:output_type -> google.protobuf.Empty
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_orderpb_order_proto_init() }

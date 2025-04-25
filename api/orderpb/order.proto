@@ -17,8 +17,8 @@ message CreateOrderRequest {
 } // 请求创建，给出消费者id和物品及数量
 
 message  GetOrderRequest {
-  string CustomerID = 1;
-  repeated ItemWithQuantity Items = 2;
+  string OrderID = 1;
+  string CustomerID = 2;
 }
 
 message ItemWithQuantity {
@@ -38,4 +38,5 @@ message Order {
   string CustomerID = 2;
   string Status = 3;
   repeated Item Items = 4;
+  string PaymentLink = 5;
 }

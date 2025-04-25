@@ -5,6 +5,7 @@ import (
 	"github.com/Kome1jiSatori/gorder-v2/common/config"
 	"github.com/Kome1jiSatori/gorder-v2/common/discovery"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
+	"github.com/Kome1jiSatori/gorder-v2/common/logging"
 	"github.com/Kome1jiSatori/gorder-v2/common/server"
 	"github.com/Kome1jiSatori/gorder-v2/order/ports"
 	"github.com/Kome1jiSatori/gorder-v2/order/service"
@@ -16,6 +17,7 @@ import (
 )
 
 func init() {
+	logging.Init()
 	if err := config.NewViperConfig(); err != nil {
 		log.Fatal(err)
 	}
@@ -31,6 +33,7 @@ func main() {
 	application, cleanup := service.NewApplication(ctx)
 	defer cleanup()
 
+	// 注册到consul
 	deregisterFunc, err := discovery.RegisterToConsul(ctx, serviceName)
 	if err != nil {
 		logrus.Fatal(err)
