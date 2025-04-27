@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/Kome1jiSatori/gorder-v2/common/broker"
 	"github.com/Kome1jiSatori/gorder-v2/common/config"
 	"github.com/Kome1jiSatori/gorder-v2/common/logging"
@@ -42,7 +43,7 @@ func main() {
 
 	go consumer.NewConsumer(application).Listen(ch)
 
-	paymentHandler := NewPaymentHandler()
+	paymentHandler := NewPaymentHandler(ch)
 	switch serverType {
 	case "http":
 		server.RunHTTPServer(viper.GetString("payment.service-name"), paymentHandler.RegisterRoutes)

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
 	"github.com/Kome1jiSatori/gorder-v2/order/app"
 	"github.com/Kome1jiSatori/gorder-v2/order/app/command"
 	"github.com/Kome1jiSatori/gorder-v2/order/app/query"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type HTTPServer struct {
@@ -28,9 +30,10 @@ func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID stri
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "success",
-		"customer_id": req.CustomerID,
-		"order_id":    r.OrderID,
+		"message":      "success",
+		"customer_id":  req.CustomerID,
+		"order_id":     r.OrderID,
+		"redirect_url": fmt.Sprintf("http://localhost:8282/success?customerID=%s&orderID=%s", req.CustomerID, r.OrderID),
 	})
 }
 
@@ -43,5 +46,9 @@ func (H HTTPServer) GetCustomerCustomerIDOrdersOrderID(c *gin.Context, customerI
 		c.JSON(http.StatusOK, gin.H{"error": err})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success", "data": o})
+	c.JSON(http.StatusOK, gin.H{"message": "success",
+		"data": gin.H{
+			"Order": o,
+		},
+	})
 }

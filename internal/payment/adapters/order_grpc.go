@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"context"
+
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
 	"github.com/sirupsen/logrus"
 )

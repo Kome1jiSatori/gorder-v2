@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+
 	"github.com/Kome1jiSatori/gorder-v2/common/decorator"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
 	domain "github.com/Kome1jiSatori/gorder-v2/stock/domain/stock"
