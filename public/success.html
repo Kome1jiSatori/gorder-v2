@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <title>Gorder</title>
 </head>
-
 <body>
 <section>
     <p>
         您已成功下单！
     </p>
     <p>
-        订单状态: <span id="orderStatus">等待中...</span>
+        订单状态：<span id="orderStatus">等待中...</span>
     </p>
-    <div class="ready">
+    <div class="ready-popup">
         <p>您的订单正在处理中...</p>
-        <p style="color:burlywood; margin: 12px">
-            订单号: <b><span id="orderID"></span></b>
+        <p style="color:burlywood; margin:12px">
+            订单号：<b><span id="orderID"></span></b>
         </p>
+
         <button class="close-btn" onclick="document.querySelector('.ready-popup').style.display = 'none'">
             关闭
         </button>
@@ -30,14 +30,15 @@
 </section>
 </body>
 
-<style >
-    html{
+<style>
+    html {
         margin: 0;
         padding: 0;
-        background-color: azure;
-        color:darkslategray;
+        background-color: antiquewhite;
+        color: darkblue;
     }
-    section{
+
+    section {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -46,7 +47,7 @@
         height: 100vh;
     }
 
-    .ready-popup{
+    .ready-popup {
         display: none;
         flex-direction: column;
         justify-content: center;
@@ -62,11 +63,11 @@
         border-radius: 5px;
     }
 
-    .ready-popup p{
+    .ready-popup p {
         margin: 0;
     }
 
-    .after-payment-popup{
+    .after-payment-popup {
         display: none;
         flex-direction: column;
         justify-content: center;
@@ -82,11 +83,10 @@
         border-radius: 5px;
     }
 
-    .after-payment-popup p{
+    .after-payment-popup p {
         margin: 0;
     }
-
-    .after-payment-popup a{
+    .after-payment-popup a {
         color: white;
         margin-top: 10px;
         padding: 5px 10px;
@@ -95,7 +95,7 @@
         text-decoration: none;
     }
 
-    .close-btn{
+    .close-btn {
         margin-top: 10px;
         padding: 5px 10px;
         background-color: green;
@@ -103,7 +103,6 @@
         border: none;
         cursor: pointer;
     }
-
 </style>
 
 <script>
@@ -118,27 +117,37 @@
     const getOrder = async() => {
         const res = await fetch(`/api/customer/${customerID}/orders/${orderID}`);
         const data = await res.json();
-        if (data.data.Order.Status === 'waiting_for_payment'){
-            order.Status = '等待支付...';
-            document.getElementById('orderStatus').InnerText = order.Status;
-            document.querySelector('.after-payment-popup').style.display = 'block';
-            document.getElementById('payment-link').href = data.data.Order.PaymentLink;
+        console.log("data = ", data)
+
+        /*
+        {
+          "code": 0,
+          "message": "success",
+          "data": {
+            ...
+          }
         }
-        if (data.data.Order.Status === 'paid'){
-            order.Status = '已支付成功，请等待...';
-            document.getElementById('orderStatus').InnerText = order.Status;
+         */
+        if (data.data.status === 'waiting_for_payment') {
+            order.status = '等待支付...';
+            document.getElementById('orderStatus').innerText = order.status;
+            document.querySelector('.after-payment-popup').style.display = 'block';
+            document.getElementById('payment-link').href = data.data.payment_link;
+        }
+        if (data.data.status === 'paid') {
+            order.status = '已支付成功，请等待...';
+            document.getElementById('orderStatus').innerText = order.status;
             setTimeout(getOrder, 5000);
-        } else if(data.data.Order.Status === 'ready'){
-            order.Status = '已完成';
+        } else if (data.data.status === 'ready') {
+            order.status = '已完成...';
             document.querySelector('.after-payment-popup').style.display = 'none';
             document.querySelector('.ready-popup').style.display = 'block';
-            document.getElementById('orderID').InnerText = orderID;
-            document.getElementById('orderStatus').InnerText = order.Status;
-        }else{
+            document.getElementById('orderID').innerText = orderID;
+            document.getElementById('orderStatus').innerText = order.status;
+        } else {
             setTimeout(getOrder, 5000);
         }
     }
     getOrder();
 </script>
-
 </html>

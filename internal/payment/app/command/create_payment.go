@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"go.opentelemetry.io/otel"
 
 	"github.com/Kome1jiSatori/gorder-v2/common/decorator"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
@@ -21,6 +22,10 @@ type createPaymentHandler struct {
 }
 
 func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (string, error) {
+	tr := otel.Tracer("payment")
+	ctx, span := tr.Start(ctx, "create_payment")
+	defer span.End()
+
 	link, err := c.processor.CreatePaymentLink(ctx, cmd.Order)
 	if err != nil {
 		return "", err

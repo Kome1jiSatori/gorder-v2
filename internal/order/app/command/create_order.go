@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-
+	"fmt"
 	"github.com/Kome1jiSatori/gorder-v2/common/broker"
 	"github.com/Kome1jiSatori/gorder-v2/common/decorator"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
@@ -12,6 +12,7 @@ import (
 	domain "github.com/Kome1jiSatori/gorder-v2/order/domain/order"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
 )
 
 // 为谁创建订单以及订单内容
@@ -56,6 +57,16 @@ func NewCreateOrderHandler(
 }
 
 func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*CreateOrderResult, error) {
+	// 没有异常发mq
+	q, err := c.channel.QueueDeclare(broker.EventOrderCreated, true, false, false, false, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	t := otel.Tracer("rabbitmq")
+	ctx, span := t.Start(ctx, fmt.Sprintf("rabbitmq.%s.publish", q.Name))
+	defer span.End()
+
 	validItems, err := c.validate(ctx, cmd.Items) // 校验
 	if err != nil {
 		return nil, err
@@ -68,19 +79,17 @@ func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*Creat
 	if err != nil {
 		return nil, err
 	}
-	// 没有异常发mq
-	q, err := c.channel.QueueDeclare(broker.EventOrderCreated, true, false, false, false, nil)
-	if err != nil {
-		return nil, err
-	}
+
 	marshalledOrder, err := json.Marshal(o)
 	if err != nil {
 		return nil, err
 	}
+	headers := broker.InjectRabbitMQHeaders(ctx)
 	err = c.channel.PublishWithContext(ctx, "", q.Name, false, false, amqp.Publishing{
 		ContentType:  "application/json",
 		DeliveryMode: amqp.Persistent,
 		Body:         marshalledOrder,
+		Headers:      headers,
 	})
 	if err != nil {
 		return nil, err

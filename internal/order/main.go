@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/Kome1jiSatori/gorder-v2/common/tracing"
 	"log"
 
 	"github.com/Kome1jiSatori/gorder-v2/common/broker"
@@ -32,6 +33,9 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	shutdown, err := tracing.InitJaegerProvider(viper.GetString("jaeger.url"), serviceName)
+	defer shutdown(ctx)
 
 	application, cleanup := service.NewApplication(ctx)
 	defer cleanup()
