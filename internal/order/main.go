@@ -2,15 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/Kome1jiSatori/gorder-v2/common/tracing"
-	"log"
-
 	"github.com/Kome1jiSatori/gorder-v2/common/broker"
-	"github.com/Kome1jiSatori/gorder-v2/common/config"
+	_ "github.com/Kome1jiSatori/gorder-v2/common/config"
 	"github.com/Kome1jiSatori/gorder-v2/common/discovery"
 	"github.com/Kome1jiSatori/gorder-v2/common/genproto/orderpb"
 	"github.com/Kome1jiSatori/gorder-v2/common/logging"
 	"github.com/Kome1jiSatori/gorder-v2/common/server"
+	"github.com/Kome1jiSatori/gorder-v2/common/tracing"
 	"github.com/Kome1jiSatori/gorder-v2/order/infrastructure/consumer"
 	"github.com/Kome1jiSatori/gorder-v2/order/ports"
 	"github.com/Kome1jiSatori/gorder-v2/order/service"
@@ -22,9 +20,6 @@ import (
 
 func init() {
 	logging.Init()
-	if err := config.NewViperConfig(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 // 开启服务

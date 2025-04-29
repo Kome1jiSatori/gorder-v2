@@ -39,13 +39,13 @@ func (c *Consumer) Listen(ch *amqp.Channel) {
 	}
 	go func() {
 		for msg := range msgs {
-			c.handleMessage(msg, q)
+			c.handleMessage(ch, msg, q)
 		}
 	}()
 	<-forever
 }
 
-func (c *Consumer) handleMessage(msg amqp.Delivery, q amqp.Queue) {
+func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Queue) {
 	ctx := broker.ExtractRabbitMQHeaders(context.Background(), msg.Headers)
 	t := otel.Tracer("rabbitmq")
 	_, span := t.Start(ctx, fmt.Sprintf("rabbitmq.%s.consume", q.Name))
@@ -67,8 +67,11 @@ func (c *Consumer) handleMessage(msg amqp.Delivery, q amqp.Queue) {
 		},
 	})
 	if err != nil {
-		logrus.Infof("rrror updating order, order id=%s, err=%v", o.ID, err)
-		// TODO: retry
+		logrus.Infof("error updating order, order id=%s, err=%v", o.ID, err)
+		if err = broker.HandleRetry(ctx, ch, &msg); err != nil {
+			logrus.Warnf("retry_error, error handling retry, messageid=%s, err=%v", msg.MessageId, err)
+		}
+		_ = msg.Nack(false, false)
 		return
 	}
 
