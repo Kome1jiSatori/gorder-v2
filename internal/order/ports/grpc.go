@@ -61,6 +61,7 @@ func (G GRPCServer) UpdateOrder(ctx context.Context, request *orderpb.Order) (_ 
 	_, err = G.app.Commands.UpdateOrder.Handle(ctx, command.UpdateOrder{
 		Order: order,
 		UpdateFn: func(ctx context.Context, order *domain.Order) (*domain.Order, error) {
+
 			return order, nil
 		},
 	})

@@ -132,7 +132,7 @@
             order.status = '等待支付...';
             document.getElementById('orderStatus').innerText = order.status;
             document.querySelector('.after-payment-popup').style.display = 'block';
-            document.getElementById('payment-link').href = data.data.payment_link;
+            document.getElementById('payment-link').href = data.data.paymentLink;
         }
         if (data.data.status === 'paid') {
             order.status = '已支付成功，请等待...';
